@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRUTAL SPLIT</title>
+    <meta name="description" content="Split PDFs locally. No uploads. No tracking.">
+    <meta name="theme-color" content="#000000">
+    <link rel="stylesheet" href="styles.css">
+    <!-- pdf-lib via CDN (cached by SW) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQlJVVEFMIFNQTElUIiwic2hvcnRfbmFtZSI6IlNwbGl0Iiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmYiLCJ0aGVtZV9jb2xvciI6IiMwMDAifQ==">
+</head>
+<body>
+
+    <!-- Offline Indicator -->
+    <div id="offline-badge" class="badge hidden">OFFLINE READY</div>
+
+    <main class="container">
+        <header class="header-block">
+            <h1>BRUTAL SPLIT</h1>
+            <p class="subtitle">PDF lokal splitten. Keine Uploads. Kein Tracking.</p>
+            <p class="micro">Datei bleibt auf deinem Gerät. Output direkt als Download.</p>
+        </header>
+
+        <!-- STATE 1: UPLOAD -->
+        <section id="upload-section" class="card drop-zone">
+            <input type="file" id="file-input" accept=".pdf,application/pdf" hidden>
+            <div class="drop-content" id="drop-content">
+                <div class="icon">📄</div>
+                <h2>PDF ablegen oder klicken</h2>
+                <p class="micro">Maximale Dateigröße nur durch RAM begrenzt.</p>
+            </div>
+        </section>
+
+        <!-- STATE 2: CONFIG & PREVIEW -->
+        <section id="config-section" class="hidden">
+            <div class="card info-card">
+                <div class="flex-between">
+                    <div>
+                        <h3 id="file-name" class="truncate">filename.pdf</h3>
+                        <span id="file-size" class="mono-tag">0 KB</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="big-number" id="total-pages">0</div>
+                        <div class="label">Seiten</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Feature: Naming Template -->
+            <div class="card">
+                <label class="block-label">Namensvorlage (Output)</label>
+                <div class="template-input-group">
+                    <input type="text" id="naming-template" value="{name}_part_{i}_pages_{start}-{end}.pdf" class="brutal-input">
+                </div>
+                <p class="hint">Variablen: <span class="mono">{name}</span>, <span class="mono">{i}</span>, <span class="mono">{start}</span>, <span class="mono">{end}</span></p>
+                <div class="live-preview">
+                    <span class="label">Vorschau:</span>
+                    <code id="filename-preview" class="mono">...</code>
+                </div>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="card">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="equal">Gleichmäßig aufteilen</button>
+                    <button class="mode-btn" data-mode="custom">Benutzerdefinierte Bereiche</button>
+                </div>
+
+                <!-- Equal Split Controls -->
+                <div id="equal-controls" class="control-group">
+                    <label class="block-label">Anzahl der Teile</label>
+                    <div class="input-row">
+                        <input type="number" id="parts-count" min="1" value="2" class="brutal-input number-input">
+                        <button id="update-preview-btn" class="btn secondary">Vorschau aktualisieren</button>
+                    </div>
+                </div>
+
+                <!-- Custom Range Controls -->
+                <div id="custom-controls" class="control-group hidden">
+                    <label class="block-label">Bereiche (z.B. 1-5,6-10,11-15)</label>
+                    <input type="text" id="custom-ranges" placeholder="1-3,4-7,8-10" class="brutal-input">
+                    <p id="range-error" class="error-text hidden">Ungültiges Format. Bitte verwenden Sie: Start-Ende,Start-Ende</p>
+                </div>
+            </div>
+
+            <!-- Preview Table -->
+            <div class="card">
+                <h3 class="section-title">Vorschau der Teile</h3>
+                <div class="table-container">
+                    <table id="preview-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Dateiname</th>
+                                <th>Seitenbereich</th>
+                                <th>Anzahl</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-body">
+                            <!-- JS generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="action-bar">
+                <button id="split-btn" class="btn primary big">Split & Download</button>
+                <button id="reset-btn" class="btn danger">Reset</button>
+            </div>
+
+            <!-- Progress -->
+            <div id="progress-container" class="card hidden">
+                <div class="progress-header">
+                    <span id="progress-text">Initialisiere...</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div id="progress-bar" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Output List -->
+            <div id="output-section" class="hidden">
+                <h3 class="section-title success-title">✓ Erfolgreich erstellt</h3>
+                <div id="download-list" class="download-grid">
+                    <!-- JS generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Panel -->
+        <div id="error-panel" class="card error-card hidden">
+            <h3>⚠ Fehler</h3>
+            <p id="error-message">Etwas ist schiefgelaufen.</p>
+            <code id="error-tech" class="error-tech"></code>
+            <button id="error-close" class="btn secondary small">Schließen</button>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
