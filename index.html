@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRUTAL SPLIT</title>
+    <meta name="description" content="PDF lokal splitten. Keine Uploads.">
+    <meta name="theme-color" content="#FF00FF">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQlJVVEFMIFNQTElUIiwic2hvcnRfbmFtZSI6IlNwbGl0Iiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNGRjAwRkYiLCJ0aGVtZV9jb2xvciI6IiMwMDAwMDAifQ==">
+</head>
+<body>
+    <!-- Glitchy Offline Badge -->
+    <div id="offline-badge" class="badge glitch hidden">OFFLINE_READY.exe</div>
+
+    <!-- Aggressive Header -->
+    <header class="brutal-header">
+        <div class="header-bg-text">BRUTAL</div>
+        <h1 class="main-title">
+            <span class="title-line">BRUTAL</span>
+            <span class="title-line offset">SPLIT</span>
+        </h1>
+        <div class="header-tag">
+            <span class="tag-item">PDF_TOOL</span>
+            <span class="tag-item">V1.0</span>
+            <span class="tag-item">NO_CLOUD</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Warning Banner -->
+        <div class="warning-strip">
+            <div class="marquee">
+                <span>⚠ LOKALE VERARBEITUNG ONLY ⚠ KEINE UPLOADS ⚠ 100% PRIVAT ⚠ LOKALE VERARBEITUNG ONLY ⚠</span>
+            </div>
+        </div>
+
+        <!-- Upload Zone - RAW & AGGRESSIVE -->
+        <section id="upload-section" class="upload-container">
+            <div class="corner-label top-left">STEP_01</div>
+            <div class="corner-label bottom-right">DROP_ZONE</div>
+            
+            <input type="file" id="file-input" accept=".pdf,application/pdf" hidden>
+            
+            <div class="drop-zone" id="drop-zone">
+                <div class="drop-content">
+                    <div class="drop-icon">📄➗</div>
+                    <h2 class="drop-title">PDF REINHÄNGEN</h2>
+                    <p class="drop-sub">Drag & Drop oder Klick</p>
+                    <div class="file-types">[.PDF ONLY]</div>
+                </div>
+                <div class="drop-border"></div>
+            </div>
+        </section>
+
+        <!-- Config Section -->
+        <section id="config-section" class="hidden">
+            
+            <!-- File Info Card -->
+            <div class="info-grid">
+                <div class="info-card skew-left">
+                    <div class="card-label">DATEI</div>
+                    <div class="info-value" id="file-name">---</div>
+                    <div class="info-meta" id="file-size">0 KB</div>
+                </div>
+                
+                <div class="info-card skew-right highlight">
+                    <div class="card-label">SEITEN</div>
+                    <div class="info-value huge" id="total-pages">0</div>
+                    <div class="info-meta">TOTAL</div>
+                </div>
+            </div>
+
+            <!-- Naming Template - INDUSTRIAL -->
+            <div class="config-block">
+                <div class="block-header">
+                    <span class="block-num">01</span>
+                    <h3>NAMENS_TEMPLATE</h3>
+                </div>
+                <div class="input-warper">
+                    <input type="text" id="naming-template" value="{name}_part_{i}_pages_{start}-{end}.pdf" class="brutal-input code-font">
+                    <div class="input-shadow"></div>
+                </div>
+                <div class="template-vars">
+                    <span class="var-tag">{name}</span>
+                    <span class="var-tag">{i}</span>
+                    <span class="var-tag">{start}</span>
+                    <span class="var-tag">{end}</span>
+                </div>
+                <div class="preview-box">
+                    <span class="preview-label">OUTPUT_PREVIEW:</span>
+                    <code id="filename-preview" class="preview-code">...</code>
+                </div>
+            </div>
+
+            <!-- Mode Selection - TABS -->
+            <div class="config-block">
+                <div class="block-header">
+                    <span class="block-num">02</span>
+                    <h3>SPLIT_MODUS</h3>
+                </div>
+                
+                <div class="mode-tabs">
+                    <button class="mode-tab active" data-mode="equal">
+                        <span class="tab-icon">⚡</span>
+                        <span class="tab-text">AUTO_SPLIT</span>
+                    </button>
+                    <button class="mode-tab" data-mode="custom">
+                        <span class="tab-icon">✎</span>
+                        <span class="tab-text">CUSTOM_RANGES</span>
+                    </button>
+                </div>
+
+                <!-- Equal Controls -->
+                <div id="equal-controls" class="control-panel">
+                    <label class="input-label">ANZAHL_TEILE</label>
+                    <div class="number-warper">
+                        <button class="num-btn" id="dec-parts">−</button>
+                        <input type="number" id="parts-count" min="1" value="2" class="brutal-number">
+                        <button class="num-btn" id="inc-parts">+</button>
+                    </div>
+                    <div class="range-display">MAX: <span id="max-parts">99</span></div>
+                </div>
+
+                <!-- Custom Controls -->
+                <div id="custom-controls" class="control-panel hidden">
+                    <label class="input-label">BEREICHE_DEFINIEREN</label>
+                    <input type="text" id="custom-ranges" placeholder="1-5,6-10,11-15" class="brutal-input code-font">
+                    <div id="range-error" class="error-box hidden">
+                        <span class="error-icon">✖</span>
+                        <span>INVALID_FORMAT</span>
+                    </div>
+                    <div class="format-hint">FORMAT: Start-Ende,Start-Ende</div>
+                </div>
+            </div>
+
+            <!-- Preview Table - RAW DATA -->
+            <div class="config-block">
+                <div class="block-header">
+                    <span class="block-num">03</span>
+                    <h3>SPLIT_PREVIEW</h3>
+                </div>
+                
+                <div class="table-container">
+                    <table id="preview-table">
+                        <thead>
+                            <tr>
+                                <th>IDX</th>
+                                <th>FILENAME</th>
+                                <th>RANGE</th>
+                                <th>COUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-body">
+                            <tr class="empty-row">
+                                <td colspan="4">[WARTE_AUF_INPUT...]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-zone">
+                <button id="split-btn" class="btn brutal-primary">
+                    <span class="btn-text">AUSFÜHREN</span>
+                    <span class="btn-icon">⏵</span>
+                </button>
+                
+                <button id="reset-btn" class="btn brutal-secondary">
+                    <span class="btn-text">RESET</span>
+                    <span class="btn-icon">↺</span>
+                </button>
+            </div>
+
+            <!-- Progress - TERMINAL STYLE -->
+            <div id="progress-container" class="terminal-box hidden">
+                <div class="terminal-header">
+                    <span class="term-btn red"></span>
+                    <span class="term-btn yellow"></span>
+                    <span class="term-btn green"></span>
+                    <span class="term-title">processing.log</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="progress-line">
+                        <span class="prompt">></span>
+                        <span id="progress-text">Initialisiere...</span>
+                        <span id="progress-percent" class="percent">[0%]</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div id="output-section" class="hidden">
+                <div class="success-banner">
+                    <span class="success-icon">✓</span>
+                    <span class="success-text">OPERATION_COMPLETE</span>
+                </div>
+                
+                <div id="download-list" class="download-grid">
+                    <!-- Generated -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Error Modal -->
+        <div id="error-panel" class="modal hidden">
+            <div class="modal-content error-content">
+                <div class="modal-header error-header">
+                    <span class="error-title">SYSTEM_FEHLER</span>
+                    <button id="error-close" class="close-btn">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="error-message" id="error-message">Unknown error</div>
+                    <div class="error-tech" id="error-tech"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="brutal-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>BRUTAL_SPLIT</h4>
+                <p>Lokale PDF-Verarbeitung</p>
+            </div>
+            <div class="footer-col">
+                <h4>TECH_STACK</h4>
+                <p>Vanilla JS</p>
+                <p>pdf-lib</p>
+                <p>Service Worker</p>
+            </div>
+            <div class="footer-col">
+                <h4>STATUS</h4>
+                <p id="sw-status">Checking...</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2024 // NO RIGHTS RESERVED // COPY_Frei</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
