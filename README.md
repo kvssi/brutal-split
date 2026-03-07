@@ -1,5 +1,3 @@
----
-
 ```markdown
 <!-- BRUTAL SPLIT README -->
 <!-- NO MARKDOWN STANDARDS. RAW HTML. -->
