@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRUTAL SPLIT - PDF Zerleger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+    <!-- Kein manifest Link nötig für GitHub Pages -->
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">◫</div>
+                <div class="logo-text">
+                    <span class="logo-brutal">BRUTAL</span>
+                    <span class="logo-split">SPLIT</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- HERO -->
+        <section class="hero-card">
+            <h1 class="hero-title">
+                <span class="hero-line">PDF</span><br>
+                <span class="hero-line highlight">ZERLEGEN.</span><br>
+                <span class="hero-line">SOFORT.</span>
+            </h1>
+            <p class="hero-sub">
+                <span class="sub-border"></span>
+                Lokal. Kein Upload. Kein Tracking.
+            </p>
+        </section>
+
+        <!-- UPLOAD -->
+        <section class="upload-section" id="uploadSection">
+            <div class="drop-zone" id="dropZone">
+                <div class="upload-content">
+                    <div class="upload-icon-box">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h2 class="upload-title">PDF REINHÄNGEN</h2>
+                    <p class="upload-hint">Oder klicken</p>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf" hidden>
+            </div>
+            <div class="upload-arrow">
+                <div class="arrow-circle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- INFO STRIP -->
+        <section class="info-strip" id="infoStrip" style="display: none;">
+            <div class="info-card">
+                <span class="info-label">DATEI</span>
+                <span class="info-value" id="fileName">-</span>
+            </div>
+            <div class="info-card">
+                <span class="info-label">SEITEN</span>
+                <span class="info-value pages" id="pageCount">-</span>
+            </div>
+        </section>
+
+        <!-- CONTROL PANEL -->
+        <section class="control-panel" id="controlPanel" style="display: none;">
+            <div class="panel-header">
+                <h2 class="panel-title">SPLIT-MODUS</h2>
+            </div>
+            
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="equal">
+                    <span class="mode-icon">⚡</span>
+                    <span class="mode-text">GLEICH</span>
+                </button>
+                <button class="mode-btn" data-mode="ranges">
+                    <span class="mode-icon">✎</span>
+                    <span class="mode-text">BEREICHE</span>
+                </button>
+            </div>
+
+            <!-- Equal Mode -->
+            <div class="mode-content" id="equalMode">
+                <label class="input-label">IN WIE VIELE TEILE?</label>
+                <div class="stepper">
+                    <button class="stepper-btn" id="minusBtn">−</button>
+                    <input type="number" class="stepper-input" id="partsInput" value="2" min="2" max="50">
+                    <button class="stepper-btn" id="plusBtn">+</button>
+                </div>
+            </div>
+
+            <!-- Ranges Mode -->
+            <div class="mode-content hidden" id="rangesMode">
+                <label class="input-label">WELCHE SEITEN?</label>
+                <input type="text" class="range-input" id="rangeInput" placeholder="z.B. 1-5, 6-10, 11-20">
+                <p class="range-hint">Format: 1-5, 6-10 (Komma getrennt)</p>
+                <p class="error-msg hidden" id="rangeError">✖ Ungültig</p>
+            </div>
+        </section>
+
+        <!-- PREVIEW -->
+        <section class="preview-panel" id="previewPanel" style="display: none;">
+            <h2 class="preview-title">VORSCHAU</h2>
+            <ul class="preview-list" id="previewList"></ul>
+        </section>
+
+        <!-- ACTION BUTTON -->
+        <button class="action-btn" id="splitBtn" style="display: none;">
+            <span>LOS GEHT'S</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
+
+        <!-- PROGRESS -->
+        <section class="progress-panel hidden" id="progressPanel">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">Teil 0/0</span>
+        </section>
+
+        <!-- RESULTS -->
+        <section class="results-panel hidden" id="resultsPanel">
+            <div class="results-header">
+                <span>✓ FERTIG</span>
+            </div>
+            <ul class="results-list" id="resultsList"></ul>
+        </section>
+    </main>
+
+    <!-- ERROR TOAST -->
+    <div class="error-toast hidden" id="errorToast">
+        <span id="errorText">Fehler</span>
+    </div>
+
+    <!-- Scripts mit relativen Pfaden für GitHub Pages -->
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="./app.js"></script>
+    
+    <!-- Optional: Service Worker nur registrieren wenn nicht auf file:// -->
+    <script>
+        if ('serviceWorker' in navigator && location.protocol === 'https:') {
+            navigator.serviceWorker.register('./sw.js').catch(console.error);
+        }
+    </script>
+</body>
+</html>
