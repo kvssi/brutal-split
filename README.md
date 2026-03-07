@@ -1,3 +1,9 @@
+---
+
+```markdown
+<!-- BRUTAL SPLIT README -->
+<!-- NO MARKDOWN STANDARDS. RAW HTML. -->
+
 ██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗     
 ██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║     
 ██████╔╝██████╔╝██║   ██║   ██║   ███████║██║     
@@ -11,17 +17,6 @@
 ╚════██║██╔═══╝ ██║     ██║   ██║   
 ███████║██║     ███████╗██║   ██║   
 ╚══════╝╚═╝     ╚══════╝╚═╝   ╚═╝   
-```
-
-# BRUTAL SPLIT
-
-```
-╔══════════════════════════════════════════════════╗
-║  PDF DESTROYER // NO UPLOADS // 100% LOCAL       ║
-╚══════════════════════════════════════════════════╝
-```
-
----
 
 ## ⚡ WHAT IS THIS
 
@@ -47,9 +42,11 @@ cd brutal-split
 npx serve
 # OR
 python -m http.server 8000
+# OR
+php -S localhost:8000
 
 # 3. OPEN BROWSER
-# http://localhost:8000
+# Navigate to http://localhost:8000
 
 # 4. DROP PDF. SPLIT. DOWNLOAD. DESTROY.
 ```
@@ -159,7 +156,7 @@ git push origin main
 # Settings → Pages → Source: main branch
 
 # 3. Wait 2 minutes
-# https://YOURNAME.github.io/brutal-split
+# Your site: https://YOURNAME.github.io/brutal-split
 ```
 
 ### Netlify (DRAG & DROP)
@@ -206,9 +203,7 @@ REDISTRIBUTE CHAOTICALLY.
 - **Space Mono** by Colophon Foundry - The voice  
 - **Syne** by Bonjour Monde - The scream
 
----
 
-```
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃                                                 ┃
 ┃   SPLIT PDFs. NOT CLOUDS.                       ┃
@@ -216,45 +211,7 @@ REDISTRIBUTE CHAOTICALLY.
 ┃   BRUTAL SPLIT // 2026                          ┃
 ┃                                                 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
-```
 
 ---
 
-**Wichtig**: Kopiere den Code **direkt** in eine Datei, ohne ihn durch einen Editor zu schicken der die Formatierung verändert. Die Leerzeichen am Zeilenanfang müssen exakt so bleiben wie sie sind.
-
-Falls es immer noch verschoben ist, hier ist eine **alternative kompakte Version** ohne komplexe ASCII-Art:
-
----
-
-```markdown
-```
-╔═══════════════════════════════════════════════════════════════╗
-║                                                               ║
-║   ██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗              ║
-║   ██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║              ║
-║   ██████╔╝██████╔╝██║   ██║   ██║   ███████║██║              ║
-║   ██╔══██╗██╔══██╗██║   ██║   ██║   ██╔══██║██║              ║
-║   ██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║███████╗         ║
-║   ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚══════╝         ║
-║                                                               ║
-║   ███████╗██████╗ ██╗     ██╗████████╗                       ║
-║   ██╔════╝██╔══██╗██║     ██║╚══██╔══╝                       ║
-║   ███████╗██████╔╝██║     ██║   ██║                          ║
-║   ╚════██║██╔═══╝ ██║     ██║   ██║                          ║
-║   ███████║██║     ███████╗██║   ██║                          ║
-║   ╚══════╝╚═╝     ╚══════╝╚═╝   ╚═╝                          ║
-║                                                               ║
-║   PDF DESTROYER // NO UPLOADS // 100% LOCAL                   ║
-║                                                               ║
-╚═══════════════════════════════════════════════════════════════╝
-```
-
-# BRUTAL SPLIT
-
-> ⚡ **CLIENT-SIDE PDF SPLITTER WITH NEO-BRUTALIST DESIGN**
-
-[... rest same as above ...]
-```
-
-Diese Version ist **ein einzelner Block** und wird nicht verschoben. 🔥
+Speichere das als `README.md` im Root-Verzeichnis. Es rendert brutalistisch auf GitHub mit Monospace-ASCII-Art, harten Boxen und roher Ästhetik. 🔥
