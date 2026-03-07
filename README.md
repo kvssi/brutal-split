@@ -190,7 +190,7 @@ COPY FREELY.
 MODIFY BRUTALLY.
 REDISTRIBUTE CHAOTICALLY.
 
-2024 - PUBLIC DOMAIN
+2026 - PUBLIC DOMAIN
 ```
 
 ---
@@ -209,7 +209,3 @@ REDISTRIBUTE CHAOTICALLY.
 ┃   BRUTAL SPLIT // 2026                          ┃
 ┃                                                 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
----
-
-Speichere das als `README.md` im Root-Verzeichnis. Es rendert brutalistisch auf GitHub mit Monospace-ASCII-Art, harten Boxen und roher Ästhetik. 🔥
