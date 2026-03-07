@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRUTAL SPLIT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,10 +13,9 @@
     <!-- HEADER -->
     <header class="header">
         <div class="logo">
-            <div class="logo-icon">◫</div>
-            <span>BRUTAL SPLIT</span>
+            <div class="logo-box">◫</div>
+            <span class="logo-text">BRUTAL<span class="highlight">SPLIT</span></span>
         </div>
-        <div class="status" id="sw-status">●</div>
     </header>
 
     <!-- MAIN -->
@@ -24,86 +23,101 @@
         
         <!-- HERO -->
         <section class="hero">
-            <h1>PDF.<br><span class="highlight">ZERLEGEN.</span><br>SOFORT.</h1>
-            <p class="sub">Lokal. Kein Upload. Kein Tracking.</p>
+            <h1>
+                PDF<br>
+                <span class="mark">ZERLEGEN</span>.<br>
+                SOFORT.
+            </h1>
+            <p class="hero-sub">Lokal. Kein Upload. Kein Tracking.</p>
         </section>
 
         <!-- UPLOAD -->
-        <section id="upload-section" class="card">
-            <input type="file" id="file-input" accept=".pdf" hidden>
-            <div class="upload-zone" id="drop-zone">
-                <div class="upload-icon">↑</div>
-                <div class="upload-text">PDF REINHÄNGEN</div>
-                <div class="upload-hint">Oder klicken</div>
+        <section id="upload-section" class="panel">
+            <div class="drop-zone" id="drop-zone">
+                <div class="upload-box">
+                    <div class="upload-icon">↑</div>
+                    <div class="upload-title">PDF REINHÄNGEN</div>
+                    <div class="upload-hint">Oder klicken</div>
+                </div>
+                <div class="upload-arrow">→</div>
             </div>
+            <input type="file" id="file-input" accept=".pdf" hidden>
         </section>
 
         <!-- CONTROLS -->
         <section id="config-section" class="hidden">
             
-            <!-- FILE INFO -->
-            <div class="info-bar">
+            <!-- INFO -->
+            <div class="info-strip">
                 <div class="info-item">
                     <span class="info-label">DATEI</span>
-                    <span class="info-value" id="file-name">-</span>
+                    <span class="info-val" id="file-name">-</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">SEITEN</span>
-                    <span class="info-value big" id="total-pages">0</span>
+                    <span class="info-val big" id="total-pages">0</span>
                 </div>
             </div>
 
-            <!-- MODE SELECT -->
-            <div class="card">
-                <div class="segmented">
-                    <button class="seg-btn active" data-mode="equal">GLEICH</button>
-                    <button class="seg-btn" data-mode="custom">BEREICHE</button>
+            <!-- MODE -->
+            <div class="panel">
+                <div class="panel-title">SPLIT-MODUS</div>
+                
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="equal">
+                        <div class="mode-icon">⚡</div>
+                        <span>GLEICH</span>
+                    </button>
+                    <button class="mode-btn" data-mode="custom">
+                        <div class="mode-icon">✎</div>
+                        <span>BEREICHE</span>
+                    </button>
                 </div>
 
                 <!-- EQUAL -->
-                <div id="equal-controls" class="control-area">
-                    <label>IN WIE VIELE TEILE?</label>
+                <div id="equal-controls" class="control-group">
+                    <label class="input-label">IN WIE VIELE TEILE?</label>
                     <div class="stepper">
-                        <button class="step-btn" id="dec-parts">−</button>
+                        <button class="step" id="dec-parts">−</button>
                         <input type="number" id="parts-count" value="2" min="1">
-                        <button class="step-btn" id="inc-parts">+</button>
+                        <button class="step" id="inc-parts">+</button>
                     </div>
                 </div>
 
                 <!-- CUSTOM -->
-                <div id="custom-controls" class="control-area hidden">
-                    <label>WELCHE SEITEN?</label>
-                    <input type="text" id="custom-ranges" placeholder="1-5, 6-10, 11-15" class="text-in">
+                <div id="custom-controls" class="control-group hidden">
+                    <label class="input-label">WELCHE SEITEN?</label>
+                    <input type="text" id="custom-ranges" placeholder="1-5, 6-10, 11-15" class="dashed-input">
                     <span class="error hidden" id="range-error">✖ Ungültig</span>
                 </div>
             </div>
 
             <!-- PREVIEW -->
-            <div class="card">
-                <label>VORSCHAU</label>
-                <div class="preview-list" id="preview-list">
-                    <div class="preview-empty">Warte auf Eingabe...</div>
+            <div class="panel">
+                <div class="panel-title">VORSCHAU</div>
+                <div class="preview-box" id="preview-list">
+                    <div class="preview-placeholder">Warte auf Eingabe...</div>
                 </div>
             </div>
 
             <!-- ACTION -->
-            <button class="btn-main" id="split-btn">
+            <button class="action-btn" id="split-btn">
                 <span>LOS GEHT'S</span>
-                <span class="arrow">→</span>
+                <span class="arr">→</span>
             </button>
 
             <!-- PROGRESS -->
-            <div class="progress hidden" id="progress-container">
+            <div class="progress-panel hidden" id="progress-container">
                 <div class="progress-track">
-                    <div class="progress-fill" id="progress-bar"></div>
+                    <div class="progress-bar" id="progress-bar"></div>
                 </div>
                 <span id="progress-text">Berechne...</span>
             </div>
 
             <!-- RESULTS -->
-            <div class="results hidden" id="output-section">
-                <div class="results-header">✓ FERTIG</div>
-                <div class="results-list" id="download-list"></div>
+            <div class="result-panel hidden" id="output-section">
+                <div class="result-header">✓ FERTIG</div>
+                <div class="result-list" id="download-list"></div>
             </div>
 
         </section>
