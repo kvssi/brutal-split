@@ -1,39 +1,27 @@
-// BRUTAL SPLIT - TRUE NEO-BRUTALIST EDITION
-// No compromises. Pure functionality.
-
 const els = {
-    uploadSection: document.getElementById('upload-section'),
-    configSection: document.getElementById('config-section'),
     fileInput: document.getElementById('file-input'),
     dropZone: document.getElementById('drop-zone'),
+    uploadSection: document.getElementById('upload-section'),
+    configSection: document.getElementById('config-section'),
     fileName: document.getElementById('file-name'),
-    fileSize: document.getElementById('file-size'),
     totalPages: document.getElementById('total-pages'),
-    maxParts: document.getElementById('max-parts'),
+    segBtns: document.querySelectorAll('.seg-btn'),
+    equalControls: document.getElementById('equal-controls'),
+    customControls: document.getElementById('custom-controls'),
     partsCount: document.getElementById('parts-count'),
     decParts: document.getElementById('dec-parts'),
     incParts: document.getElementById('inc-parts'),
-    previewBody: document.getElementById('preview-body'),
-    previewCount: document.getElementById('preview-count'),
+    customRanges: document.getElementById('custom-ranges'),
+    rangeError: document.getElementById('range-error'),
+    previewList: document.getElementById('preview-list'),
     splitBtn: document.getElementById('split-btn'),
-    resetBtn: document.getElementById('reset-btn'),
     progressContainer: document.getElementById('progress-container'),
     progressBar: document.getElementById('progress-bar'),
     progressText: document.getElementById('progress-text'),
-    progressPercent: document.getElementById('progress-percent'),
     outputSection: document.getElementById('output-section'),
     downloadList: document.getElementById('download-list'),
-    modeOptions: document.querySelectorAll('.mode-option'),
-    equalControls: document.getElementById('equal-controls'),
-    customControls: document.getElementById('custom-controls'),
-    customRanges: document.getElementById('custom-ranges'),
-    rangeError: document.getElementById('range-error'),
-    namingTemplate: document.getElementById('naming-template'),
-    filenamePreview: document.getElementById('filename-preview'),
     errorPanel: document.getElementById('error-panel'),
     errorMessage: document.getElementById('error-message'),
-    errorTech: document.getElementById('error-tech'),
-    errorClose: document.getElementById('error-close'),
     swStatus: document.getElementById('sw-status')
 };
 
@@ -50,17 +38,12 @@ function initSW() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
             .then(() => {
-                els.swStatus.textContent = 'ONLINE_READY';
-                els.swStatus.style.color = 'var(--c-success)';
-            })
-            .catch(() => {
-                els.swStatus.textContent = 'OFFLINE_MODE';
+                els.swStatus.classList.add('online');
             });
     }
 }
 
 function bindEvents() {
-    // Upload
     els.dropZone.addEventListener('click', () => els.fileInput.click());
     els.dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -78,77 +61,65 @@ function bindEvents() {
         if (e.target.files[0]) handleFile(e.target.files[0]);
     });
 
-    // Mode selection
-    els.modeOptions.forEach(opt => {
-        opt.addEventListener('click', () => {
-            els.modeOptions.forEach(o => o.classList.remove('active'));
-            opt.classList.add('active');
-            splitMode = opt.dataset.mode;
+    els.segBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            els.segBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            splitMode = btn.dataset.mode;
             els.equalControls.classList.toggle('hidden', splitMode !== 'equal');
             els.customControls.classList.toggle('hidden', splitMode !== 'custom');
             updatePreview();
         });
     });
 
-    // Number controls
     els.decParts.addEventListener('click', () => {
-        const val = Math.max(1, parseInt(els.partsCount.value) - 1);
-        els.partsCount.value = val;
+        els.partsCount.value = Math.max(1, parseInt(els.partsCount.value) - 1);
         updatePreview();
     });
     els.incParts.addEventListener('click', () => {
         const max = currentPdf ? currentPdf.pageCount : 999;
-        const val = Math.min(max, parseInt(els.partsCount.value) + 1);
-        els.partsCount.value = val;
+        els.partsCount.value = Math.min(max, parseInt(els.partsCount.value) + 1);
         updatePreview();
     });
     els.partsCount.addEventListener('input', updatePreview);
     els.customRanges.addEventListener('input', updatePreview);
-    els.namingTemplate.addEventListener('input', updateFilenamePreview);
 
-    // Actions
-    els.splitBtn.addEventListener('click', executeSplit);
-    els.resetBtn.addEventListener('click', resetAll);
-    els.errorClose.addEventListener('click', () => els.errorPanel.classList.add('hidden'));
+    els.splitBtn.addEventListener('click', startSplit);
 }
 
 async function handleFile(file) {
     if (file.type !== 'application/pdf') {
-        showError('INVALID_FILE_TYPE', 'Only PDF files accepted');
+        showError('Nur PDF');
         return;
     }
 
     try {
         const bytes = await file.arrayBuffer();
         const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-        const pageCount = pdfDoc.getPageCount();
-
+        
         currentPdf = {
             bytes,
             name: file.name.replace('.pdf', ''),
             doc: pdfDoc,
-            pageCount
+            pageCount: pdfDoc.getPageCount()
         };
 
         els.fileName.textContent = file.name;
-        els.fileSize.textContent = formatBytes(file.size);
-        els.totalPages.textContent = pageCount;
-        els.maxParts.textContent = pageCount;
+        els.totalPages.textContent = currentPdf.pageCount;
 
         els.uploadSection.classList.add('hidden');
         els.configSection.classList.remove('hidden');
         
         updatePreview();
     } catch (err) {
-        showError('PDF_LOAD_FAILED', err.message);
+        showError('Fehler beim Laden');
     }
 }
 
 function updatePreview() {
     if (!currentPdf) return;
     const parts = calculateParts();
-    renderMatrix(parts);
-    updateFilenamePreview();
+    renderPreview(parts);
 }
 
 function calculateParts() {
@@ -191,54 +162,31 @@ function calculateParts() {
     return parts;
 }
 
-function renderMatrix(parts) {
-    els.previewBody.innerHTML = '';
-    els.previewCount.textContent = `${parts.length} PARTS`;
+function renderPreview(parts) {
+    els.previewList.innerHTML = '';
     
     if (parts.length === 0) {
-        els.previewBody.innerHTML = `
-            <tr class="matrix-empty">
-                <td colspan="4">
-                    <div class="empty-state">
-                        <div class="empty-icon">◌</div>
-                        <div>AWAITING PARAMETERS</div>
-                    </div>
-                </td>
-            </tr>`;
+        els.previewList.innerHTML = '<div class="preview-empty">Warte auf Eingabe...</div>';
         return;
     }
 
     parts.forEach(p => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${p.index.toString().padStart(2, '0')}</td>
-            <td>${generateFilename(p.index, p.start, p.end)}</td>
-            <td>${p.start} → ${p.end}</td>
-            <td>${p.end - p.start + 1}</td>
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `
+            <span class="preview-name">${currentPdf.name}_teil${p.index}.pdf</span>
+            <span class="preview-range">${p.start}-${p.end}</span>
         `;
-        els.previewBody.appendChild(row);
+        els.previewList.appendChild(item);
     });
 }
 
-function generateFilename(i, start, end) {
-    const t = els.namingTemplate.value || '{name}_part_{i}_pages_{start}-{end}.pdf';
-    return t
-        .replace(/{name}/g, currentPdf ? currentPdf.name : 'doc')
-        .replace(/{i}/g, i)
-        .replace(/{start}/g, start)
-        .replace(/{end}/g, end);
-}
-
-function updateFilenamePreview() {
-    els.filenamePreview.textContent = generateFilename(1, 1, 5);
-}
-
-async function executeSplit() {
+async function startSplit() {
     if (!currentPdf) return;
     
     const parts = calculateParts();
     if (parts.length === 0) {
-        showError('NO_PARTS_GENERATED', 'Check your parameters');
+        showError('Keine Teile');
         return;
     }
 
@@ -251,7 +199,7 @@ async function executeSplit() {
             const p = parts[i];
             const pct = Math.round((i / parts.length) * 100);
             
-            updateProgress(pct, `Processing part ${p.index}/${parts.length}...`);
+            updateProgress(pct, `Teil ${p.index}/${parts.length}`);
             await new Promise(r => setTimeout(r, 50));
             
             const newPdf = await PDFLib.PDFDocument.create();
@@ -264,26 +212,26 @@ async function executeSplit() {
             const bytes = await newPdf.save();
             const blob = new Blob([bytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
-            const fn = generateFilename(p.index, p.start, p.end);
             
             const item = document.createElement('div');
-            item.className = 'download-item';
+            item.className = 'result-item';
             item.innerHTML = `
-                <div class="download-filename">${fn}</div>
-                <div class="download-meta">Pages ${p.start}-${p.end} • ${formatBytes(blob.size)}</div>
-                <a href="${url}" download="${fn}" class="download-btn">DOWNLOAD_FILE</a>
+                <div class="result-info">
+                    <div class="result-name">${currentPdf.name}_teil${p.index}.pdf</div>
+                    <div class="result-meta">Seiten ${p.start}-${p.end}</div>
+                </div>
+                <a href="${url}" download="${currentPdf.name}_teil${p.index}.pdf" class="result-btn">↓</a>
             `;
             
             if (i === 0) els.downloadList.innerHTML = '';
             els.downloadList.appendChild(item);
         }
         
-        updateProgress(100, 'Complete');
+        updateProgress(100, 'Fertig');
         els.outputSection.classList.remove('hidden');
-        els.outputSection.scrollIntoView({ behavior: 'smooth' });
         
     } catch (err) {
-        showError('SPLIT_FAILED', err.message);
+        showError('Fehler beim Splitten');
     } finally {
         els.splitBtn.disabled = false;
     }
@@ -292,31 +240,10 @@ async function executeSplit() {
 function updateProgress(pct, txt) {
     els.progressBar.style.width = pct + '%';
     els.progressText.textContent = txt;
-    els.progressPercent.textContent = pct + '%';
 }
 
-function resetAll() {
-    currentPdf = null;
-    els.fileInput.value = '';
-    els.partsCount.value = 2;
-    els.customRanges.value = '';
-    els.uploadSection.classList.remove('hidden');
-    els.configSection.classList.add('hidden');
-    els.outputSection.classList.add('hidden');
-    els.progressContainer.classList.add('hidden');
-    els.errorPanel.classList.add('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showError(msg, tech) {
+function showError(msg) {
     els.errorMessage.textContent = msg;
-    els.errorTech.textContent = tech;
     els.errorPanel.classList.remove('hidden');
-}
-
-function formatBytes(b) {
-    if (!b) return '0 B';
-    const u = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(b) / Math.log(1024));
-    return Math.round(b / Math.pow(1024, i)) + ' ' + u[i];
+    setTimeout(() => els.errorPanel.classList.add('hidden'), 3000);
 }
