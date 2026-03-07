@@ -1,8 +1,3 @@
-
----
-
-```markdown
-```
 ██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗     
 ██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║     
 ██████╔╝██████╔╝██║   ██║   ██║   ███████║██║     
@@ -218,7 +213,7 @@ REDISTRIBUTE CHAOTICALLY.
 ┃                                                 ┃
 ┃   SPLIT PDFs. NOT CLOUDS.                       ┃
 ┃                                                 ┃
-┃   BRUTAL SPLIT // 2024                          ┃
+┃   BRUTAL SPLIT // 2026                          ┃
 ┃                                                 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
@@ -226,4 +221,40 @@ REDISTRIBUTE CHAOTICALLY.
 
 ---
 
-Diese Version nutzt **Code-Blöcke** und **ASCII-Art** für den brutalistischen Look – das funktioniert überall wo Markdown gerendert wird (GitHub, GitLab, etc.) ohne dass HTML-Code sichtbar wird. 🔥
+**Wichtig**: Kopiere den Code **direkt** in eine Datei, ohne ihn durch einen Editor zu schicken der die Formatierung verändert. Die Leerzeichen am Zeilenanfang müssen exakt so bleiben wie sie sind.
+
+Falls es immer noch verschoben ist, hier ist eine **alternative kompakte Version** ohne komplexe ASCII-Art:
+
+---
+
+```markdown
+```
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║   ██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗              ║
+║   ██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║              ║
+║   ██████╔╝██████╔╝██║   ██║   ██║   ███████║██║              ║
+║   ██╔══██╗██╔══██╗██║   ██║   ██║   ██╔══██║██║              ║
+║   ██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║███████╗         ║
+║   ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚══════╝         ║
+║                                                               ║
+║   ███████╗██████╗ ██╗     ██╗████████╗                       ║
+║   ██╔════╝██╔══██╗██║     ██║╚══██╔══╝                       ║
+║   ███████╗██████╔╝██║     ██║   ██║                          ║
+║   ╚════██║██╔═══╝ ██║     ██║   ██║                          ║
+║   ███████║██║     ███████╗██║   ██║                          ║
+║   ╚══════╝╚═╝     ╚══════╝╚═╝   ╚═╝                          ║
+║                                                               ║
+║   PDF DESTROYER // NO UPLOADS // 100% LOCAL                   ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+# BRUTAL SPLIT
+
+> ⚡ **CLIENT-SIDE PDF SPLITTER WITH NEO-BRUTALIST DESIGN**
+
+[... rest same as above ...]
+```
+
+Diese Version ist **ein einzelner Block** und wird nicht verschoben. 🔥
