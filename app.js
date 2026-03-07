@@ -1,6 +1,5 @@
-/**
- * BRUTAL SPLIT - NEO-BRUTALIST EDITION
- */
+// BRUTAL SPLIT - TRUE NEO-BRUTALIST EDITION
+// No compromises. Pure functionality.
 
 const els = {
     uploadSection: document.getElementById('upload-section'),
@@ -15,6 +14,7 @@ const els = {
     decParts: document.getElementById('dec-parts'),
     incParts: document.getElementById('inc-parts'),
     previewBody: document.getElementById('preview-body'),
+    previewCount: document.getElementById('preview-count'),
     splitBtn: document.getElementById('split-btn'),
     resetBtn: document.getElementById('reset-btn'),
     progressContainer: document.getElementById('progress-container'),
@@ -23,7 +23,7 @@ const els = {
     progressPercent: document.getElementById('progress-percent'),
     outputSection: document.getElementById('output-section'),
     downloadList: document.getElementById('download-list'),
-    modeTabs: document.querySelectorAll('.mode-tab'),
+    modeOptions: document.querySelectorAll('.mode-option'),
     equalControls: document.getElementById('equal-controls'),
     customControls: document.getElementById('custom-controls'),
     customRanges: document.getElementById('custom-ranges'),
@@ -34,7 +34,6 @@ const els = {
     errorMessage: document.getElementById('error-message'),
     errorTech: document.getElementById('error-tech'),
     errorClose: document.getElementById('error-close'),
-    offlineBadge: document.getElementById('offline-badge'),
     swStatus: document.getElementById('sw-status')
 };
 
@@ -42,27 +41,25 @@ let currentPdf = null;
 let splitMode = 'equal';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initServiceWorker();
-    setupEventListeners();
-    updateFilenamePreview();
+    initSW();
+    bindEvents();
+    updatePreview();
 });
 
-function initServiceWorker() {
+function initSW() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
             .then(() => {
-                els.offlineBadge.classList.remove('hidden');
                 els.swStatus.textContent = 'ONLINE_READY';
+                els.swStatus.style.color = 'var(--c-success)';
             })
             .catch(() => {
-                els.swStatus.textContent = 'SW_ERROR';
+                els.swStatus.textContent = 'OFFLINE_MODE';
             });
-    } else {
-        els.swStatus.textContent = 'NOT_SUPPORTED';
     }
 }
 
-function setupEventListeners() {
+function bindEvents() {
     // Upload
     els.dropZone.addEventListener('click', () => els.fileInput.click());
     els.dropZone.addEventListener('dragover', (e) => {
@@ -81,26 +78,28 @@ function setupEventListeners() {
         if (e.target.files[0]) handleFile(e.target.files[0]);
     });
 
-    // Mode Tabs
-    els.modeTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            els.modeTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            splitMode = tab.dataset.mode;
+    // Mode selection
+    els.modeOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            els.modeOptions.forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            splitMode = opt.dataset.mode;
             els.equalControls.classList.toggle('hidden', splitMode !== 'equal');
             els.customControls.classList.toggle('hidden', splitMode !== 'custom');
             updatePreview();
         });
     });
 
-    // Number Controls
+    // Number controls
     els.decParts.addEventListener('click', () => {
-        els.partsCount.value = Math.max(1, parseInt(els.partsCount.value) - 1);
+        const val = Math.max(1, parseInt(els.partsCount.value) - 1);
+        els.partsCount.value = val;
         updatePreview();
     });
     els.incParts.addEventListener('click', () => {
         const max = currentPdf ? currentPdf.pageCount : 999;
-        els.partsCount.value = Math.min(max, parseInt(els.partsCount.value) + 1);
+        const val = Math.min(max, parseInt(els.partsCount.value) + 1);
+        els.partsCount.value = val;
         updatePreview();
     });
     els.partsCount.addEventListener('input', updatePreview);
@@ -108,14 +107,14 @@ function setupEventListeners() {
     els.namingTemplate.addEventListener('input', updateFilenamePreview);
 
     // Actions
-    els.splitBtn.addEventListener('click', startSplit);
-    els.resetBtn.addEventListener('click', resetApp);
+    els.splitBtn.addEventListener('click', executeSplit);
+    els.resetBtn.addEventListener('click', resetAll);
     els.errorClose.addEventListener('click', () => els.errorPanel.classList.add('hidden'));
 }
 
 async function handleFile(file) {
     if (file.type !== 'application/pdf') {
-        showError('INVALID_FILE_TYPE', 'Nur .PDF Dateien erlaubt');
+        showError('INVALID_FILE_TYPE', 'Only PDF files accepted');
         return;
     }
 
@@ -135,21 +134,20 @@ async function handleFile(file) {
         els.fileSize.textContent = formatBytes(file.size);
         els.totalPages.textContent = pageCount;
         els.maxParts.textContent = pageCount;
-        els.partsCount.max = pageCount;
 
         els.uploadSection.classList.add('hidden');
         els.configSection.classList.remove('hidden');
         
         updatePreview();
     } catch (err) {
-        showError('PDF_LOAD_ERROR', err.message);
+        showError('PDF_LOAD_FAILED', err.message);
     }
 }
 
 function updatePreview() {
     if (!currentPdf) return;
     const parts = calculateParts();
-    renderPreviewTable(parts);
+    renderMatrix(parts);
     updateFilenamePreview();
 }
 
@@ -161,18 +159,14 @@ function calculateParts() {
         let count = parseInt(els.partsCount.value) || 1;
         count = Math.max(1, Math.min(count, total));
         
-        const baseSize = Math.floor(total / count);
-        const remainder = total % count;
+        const base = Math.floor(total / count);
+        const rem = total % count;
         
-        let currentPage = 1;
+        let page = 1;
         for (let i = 0; i < count; i++) {
-            const size = baseSize + (i < remainder ? 1 : 0);
-            parts.push({
-                start: currentPage,
-                end: currentPage + size - 1,
-                index: i + 1
-            });
-            currentPage += size;
+            const size = base + (i < rem ? 1 : 0);
+            parts.push({ start: page, end: page + size - 1, index: i + 1 });
+            page += size;
         }
     } else {
         const input = els.customRanges.value.trim();
@@ -181,19 +175,14 @@ function calculateParts() {
         const ranges = input.split(',');
         let valid = true;
         
-        ranges.forEach((rangeStr, idx) => {
-            const match = rangeStr.trim().match(/^(\d+)-(\d+)$/);
-            if (match) {
-                const start = parseInt(match[1]);
-                const end = parseInt(match[2]);
-                if (start > 0 && end <= total && start <= end) {
-                    parts.push({ start, end, index: idx + 1 });
-                } else {
-                    valid = false;
-                }
-            } else {
-                valid = false;
-            }
+        ranges.forEach((r, i) => {
+            const m = r.trim().match(/^(\d+)-(\d+)$/);
+            if (m) {
+                const s = parseInt(m[1]), e = parseInt(m[2]);
+                if (s > 0 && e <= total && s <= e) {
+                    parts.push({ start: s, end: e, index: i + 1 });
+                } else valid = false;
+            } else valid = false;
         });
 
         els.rangeError.classList.toggle('hidden', valid || !input);
@@ -202,31 +191,40 @@ function calculateParts() {
     return parts;
 }
 
-function renderPreviewTable(parts) {
+function renderMatrix(parts) {
     els.previewBody.innerHTML = '';
+    els.previewCount.textContent = `${parts.length} PARTS`;
     
     if (parts.length === 0) {
-        els.previewBody.innerHTML = '<tr class="empty-row"><td colspan="4">[WARTE_AUF_INPUT...]</td></tr>';
+        els.previewBody.innerHTML = `
+            <tr class="matrix-empty">
+                <td colspan="4">
+                    <div class="empty-state">
+                        <div class="empty-icon">◌</div>
+                        <div>AWAITING PARAMETERS</div>
+                    </div>
+                </td>
+            </tr>`;
         return;
     }
 
-    parts.forEach(part => {
+    parts.forEach(p => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${part.index.toString().padStart(2, '0')}</td>
-            <td>${generateFilename(part.index, part.start, part.end)}</td>
-            <td>${part.start}-${part.end}</td>
-            <td>${part.end - part.start + 1}</td>
+            <td>${p.index.toString().padStart(2, '0')}</td>
+            <td>${generateFilename(p.index, p.start, p.end)}</td>
+            <td>${p.start} → ${p.end}</td>
+            <td>${p.end - p.start + 1}</td>
         `;
         els.previewBody.appendChild(row);
     });
 }
 
-function generateFilename(index, start, end) {
-    const template = els.namingTemplate.value || '{name}_part_{i}_pages_{start}-{end}.pdf';
-    return template
+function generateFilename(i, start, end) {
+    const t = els.namingTemplate.value || '{name}_part_{i}_pages_{start}-{end}.pdf';
+    return t
         .replace(/{name}/g, currentPdf ? currentPdf.name : 'doc')
-        .replace(/{i}/g, index)
+        .replace(/{i}/g, i)
         .replace(/{start}/g, start)
         .replace(/{end}/g, end);
 }
@@ -235,72 +233,69 @@ function updateFilenamePreview() {
     els.filenamePreview.textContent = generateFilename(1, 1, 5);
 }
 
-async function startSplit() {
+async function executeSplit() {
     if (!currentPdf) return;
     
     const parts = calculateParts();
     if (parts.length === 0) {
-        showError('NO_VALID_PARTS', 'Keine gültigen Teile zum Splitten');
+        showError('NO_PARTS_GENERATED', 'Check your parameters');
         return;
     }
 
     els.splitBtn.disabled = true;
-    els.splitBtn.querySelector('.btn-text').textContent = 'VERARBEITE...';
     els.progressContainer.classList.remove('hidden');
     els.outputSection.classList.add('hidden');
 
     try {
         for (let i = 0; i < parts.length; i++) {
-            const part = parts[i];
-            const percent = Math.round((i / parts.length) * 100);
+            const p = parts[i];
+            const pct = Math.round((i / parts.length) * 100);
             
-            updateProgress(percent, `Creating part ${part.index}/${parts.length}...`);
+            updateProgress(pct, `Processing part ${p.index}/${parts.length}...`);
             await new Promise(r => setTimeout(r, 50));
             
             const newPdf = await PDFLib.PDFDocument.create();
-            const pageIndices = [];
-            for (let p = part.start; p <= part.end; p++) {
-                pageIndices.push(p - 1);
-            }
+            const indices = [];
+            for (let n = p.start; n <= p.end; n++) indices.push(n - 1);
             
-            const copiedPages = await newPdf.copyPages(currentPdf.doc, pageIndices);
-            copiedPages.forEach(page => newPdf.addPage(page));
+            const pages = await newPdf.copyPages(currentPdf.doc, indices);
+            pages.forEach(page => newPdf.addPage(page));
             
-            const pdfBytes = await newPdf.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const bytes = await newPdf.save();
+            const blob = new Blob([bytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
+            const fn = generateFilename(p.index, p.start, p.end);
             
             const item = document.createElement('div');
             item.className = 'download-item';
             item.innerHTML = `
-                <div class="download-filename">${generateFilename(part.index, part.start, part.end)}</div>
-                <div class="download-meta">${part.start}-${part.end} • ${formatBytes(blob.size)}</div>
-                <a href="${url}" download="${generateFilename(part.index, part.start, part.end)}" class="download-btn">DOWNLOAD</a>
+                <div class="download-filename">${fn}</div>
+                <div class="download-meta">Pages ${p.start}-${p.end} • ${formatBytes(blob.size)}</div>
+                <a href="${url}" download="${fn}" class="download-btn">DOWNLOAD_FILE</a>
             `;
             
             if (i === 0) els.downloadList.innerHTML = '';
             els.downloadList.appendChild(item);
         }
         
-        updateProgress(100, 'Complete!');
+        updateProgress(100, 'Complete');
         els.outputSection.classList.remove('hidden');
         els.outputSection.scrollIntoView({ behavior: 'smooth' });
         
     } catch (err) {
-        showError('SPLIT_ERROR', err.message);
+        showError('SPLIT_FAILED', err.message);
     } finally {
         els.splitBtn.disabled = false;
-        els.splitBtn.querySelector('.btn-text').textContent = 'AUSFÜHREN';
     }
 }
 
-function updateProgress(percent, text) {
-    els.progressBar.style.width = percent + '%';
-    els.progressText.textContent = text;
-    els.progressPercent.textContent = `[${percent}%]`;
+function updateProgress(pct, txt) {
+    els.progressBar.style.width = pct + '%';
+    els.progressText.textContent = txt;
+    els.progressPercent.textContent = pct + '%';
 }
 
-function resetApp() {
+function resetAll() {
     currentPdf = null;
     els.fileInput.value = '';
     els.partsCount.value = 2;
@@ -319,9 +314,9 @@ function showError(msg, tech) {
     els.errorPanel.classList.remove('hidden');
 }
 
-function formatBytes(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i)) + ' ' + ['B', 'KB', 'MB', 'GB'][i];
+function formatBytes(b) {
+    if (!b) return '0 B';
+    const u = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(b) / Math.log(1024));
+    return Math.round(b / Math.pow(1024, i)) + ' ' + u[i];
 }
