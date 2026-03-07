@@ -5,7 +5,7 @@ const els = {
     configSection: document.getElementById('config-section'),
     fileName: document.getElementById('file-name'),
     totalPages: document.getElementById('total-pages'),
-    segBtns: document.querySelectorAll('.seg-btn'),
+    modeBtns: document.querySelectorAll('.mode-btn'),
     equalControls: document.getElementById('equal-controls'),
     customControls: document.getElementById('custom-controls'),
     partsCount: document.getElementById('parts-count'),
@@ -21,49 +21,41 @@ const els = {
     outputSection: document.getElementById('output-section'),
     downloadList: document.getElementById('download-list'),
     errorPanel: document.getElementById('error-panel'),
-    errorMessage: document.getElementById('error-message'),
-    swStatus: document.getElementById('sw-status')
+    errorMessage: document.getElementById('error-message')
 };
 
 let currentPdf = null;
 let splitMode = 'equal';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initSW();
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
     bindEvents();
     updatePreview();
 });
-
-function initSW() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-            .then(() => {
-                els.swStatus.classList.add('online');
-            });
-    }
-}
 
 function bindEvents() {
     els.dropZone.addEventListener('click', () => els.fileInput.click());
     els.dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        els.dropZone.classList.add('drag-over');
+        els.dropZone.querySelector('.upload-box').style.background = '#ffff00';
     });
     els.dropZone.addEventListener('dragleave', () => {
-        els.dropZone.classList.remove('drag-over');
+        els.dropZone.querySelector('.upload-box').style.background = '';
     });
     els.dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        els.dropZone.classList.remove('drag-over');
+        els.dropZone.querySelector('.upload-box').style.background = '';
         if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
     });
     els.fileInput.addEventListener('change', (e) => {
         if (e.target.files[0]) handleFile(e.target.files[0]);
     });
 
-    els.segBtns.forEach(btn => {
+    els.modeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            els.segBtns.forEach(b => b.classList.remove('active'));
+            els.modeBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             splitMode = btn.dataset.mode;
             els.equalControls.classList.toggle('hidden', splitMode !== 'equal');
@@ -89,7 +81,7 @@ function bindEvents() {
 
 async function handleFile(file) {
     if (file.type !== 'application/pdf') {
-        showError('Nur PDF');
+        showError('Nur PDF Dateien');
         return;
     }
 
@@ -166,7 +158,7 @@ function renderPreview(parts) {
     els.previewList.innerHTML = '';
     
     if (parts.length === 0) {
-        els.previewList.innerHTML = '<div class="preview-empty">Warte auf Eingabe...</div>';
+        els.previewList.innerHTML = '<div class="preview-placeholder">Warte auf Eingabe...</div>';
         return;
     }
 
@@ -186,7 +178,7 @@ async function startSplit() {
     
     const parts = calculateParts();
     if (parts.length === 0) {
-        showError('Keine Teile');
+        showError('Keine gültigen Teile');
         return;
     }
 
