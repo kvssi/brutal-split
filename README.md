@@ -1,10 +1,7 @@
+---
+
 ```markdown
-<!-- BRUTAL SPLIT README -->
-<!-- NO MARKDOWN STANDARDS. RAW HTML. -->
-
-<div align="center">
-
-<pre style="font-family: 'Courier New', monospace; line-height: 1.2;">
+```
 ██████╗ ██████╗ ██╗   ██╗████████╗ █████╗ ██╗     
 ██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔══██╗██║     
 ██████╔╝██████╔╝██║   ██║   ██║   ███████║██║     
@@ -18,17 +15,15 @@
 ╚════██║██╔═══╝ ██║     ██║   ██║   
 ███████║██║     ███████╗██║   ██║   
 ╚══════╝╚═╝     ╚══════╝╚═╝   ╚═╝   
-</pre>
+```
 
-<h1 style="font-family: Arial Black, sans-serif; font-size: 4rem; margin: 0; letter-spacing: -0.05em;">
-  BRUTAL SPLIT
-</h1>
+# BRUTAL SPLIT
 
-<p style="font-family: monospace; background: #FF0066; color: #000; padding: 10px 20px; display: inline-block; font-weight: bold; margin: 20px 0;">
-  PDF DESTROYER // NO UPLOADS // 100% LOCAL
-</p>
-
-</div>
+```
+╔══════════════════════════════════════════════════╗
+║  PDF DESTROYER // NO UPLOADS // 100% LOCAL       ║
+╚══════════════════════════════════════════════════╝
+```
 
 ---
 
@@ -56,11 +51,9 @@ cd brutal-split
 npx serve
 # OR
 python -m http.server 8000
-# OR
-php -S localhost:8000
 
 # 3. OPEN BROWSER
-# Navigate to http://localhost:8000
+# http://localhost:8000
 
 # 4. DROP PDF. SPLIT. DOWNLOAD. DESTROY.
 ```
@@ -170,7 +163,7 @@ git push origin main
 # Settings → Pages → Source: main branch
 
 # 3. Wait 2 minutes
-# Your site: https://YOURNAME.github.io/brutal-split
+# https://YOURNAME.github.io/brutal-split
 ```
 
 ### Netlify (DRAG & DROP)
@@ -219,9 +212,7 @@ REDISTRIBUTE CHAOTICALLY.
 
 ---
 
-<div align="center" style="margin-top: 60px;">
-
-<pre style="font-family: monospace; font-size: 0.8rem; color: #666;">
+```
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃                                                 ┃
 ┃   SPLIT PDFs. NOT CLOUDS.                       ┃
@@ -229,9 +220,9 @@ REDISTRIBUTE CHAOTICALLY.
 ┃   BRUTAL SPLIT // 2024                          ┃
 ┃                                                 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-</pre>
-
-</div>
+```
 ```
 
 ---
+
+Diese Version nutzt **Code-Blöcke** und **ASCII-Art** für den brutalistischen Look – das funktioniert überall wo Markdown gerendert wird (GitHub, GitLab, etc.) ohne dass HTML-Code sichtbar wird. 🔥
