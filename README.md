@@ -201,11 +201,11 @@ REDISTRIBUTE CHAOTICALLY.
 - **Space Mono** by Colophon Foundry - The voice  
 - **Syne** by Bonjour Monde - The scream
 
-
+.
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃                                                 ┃
-┃   SPLIT PDFs. NOT CLOUDS.                       ┃
-┃                                                 ┃
+┃   SPLIT PDFs. NOT CLOUDS.                       ┃                                  
 ┃   BRUTAL SPLIT // 2026                          ┃
 ┃                                                 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+.
