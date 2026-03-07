@@ -1,11 +1,11 @@
-const CACHE = 'brutal-v3';
+const CACHE = 'brutal-v4';
 const FILES = [
     './',
     './index.html',
     './styles.css',
     './app.js',
     'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js',
-    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap'
+    'https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap'
 ];
 
 self.addEventListener('install', e => {
